@@ -3,7 +3,7 @@
 <title>Static Call Graph - [EXAM_15\EXAM_15.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image EXAM_15\EXAM_15.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Mon Mar 30 21:34:02 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Fri Apr  3 16:04:07 2026
 <BR><P>
 <H3>Maximum Stack Usage =        228 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -583,8 +583,8 @@ Global Symbols
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 </UL>
 
-<P><STRONG><a name="[6f]"></a>FRE_HIGH</STRONG> (Thumb, 276 bytes, Stack size 24 bytes, basic.o(.text.FRE_HIGH))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = FRE_HIGH &rArr; FRE_change_A
+<P><STRONG><a name="[6f]"></a>FRE_HIGH</STRONG> (Thumb, 280 bytes, Stack size 24 bytes, basic.o(.text.FRE_HIGH))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = FRE_HIGH &rArr; FRE_change_B
 </UL>
 <BR>[Calls]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FRE_change_A
@@ -593,10 +593,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_SHOW
 </UL>
 
-<P><STRONG><a name="[72]"></a>FRE_change_A</STRONG> (Thumb, 232 bytes, Stack size 8 bytes, basic.o(.text.FRE_change_A))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = FRE_change_A
-</UL>
-<BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FRE_HIGH
+<P><STRONG><a name="[72]"></a>FRE_change_A</STRONG> (Thumb, 246 bytes, Stack size 0 bytes, basic.o(.text.FRE_change_A))
+<BR><BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FRE_HIGH
 </UL>
 
 <P><STRONG><a name="[71]"></a>FRE_change_B</STRONG> (Thumb, 232 bytes, Stack size 8 bytes, basic.o(.text.FRE_change_B))
@@ -1070,7 +1068,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[a4]"></a>led_SHOW</STRONG> (Thumb, 936 bytes, Stack size 24 bytes, basic.o(.text.led_SHOW))
+<P><STRONG><a name="[a4]"></a>led_SHOW</STRONG> (Thumb, 972 bytes, Stack size 24 bytes, basic.o(.text.led_SHOW))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
 <LI>Call Chain = led_SHOW &rArr; __2sprintf &rArr; _printf_char_common &rArr; __printf
 </UL>

@@ -15,6 +15,9 @@ int TIM3_NUM_CNT;
 int TIM2_fre_IC;
 int TIM3_fre_IC;
 
+int TIM2_fre_previous_IC;
+int TIM3_fre_previous_IC;
+
 int TIM2_fre_last_IC;
 int TIM3_fre_last_IC;
 
@@ -33,8 +36,16 @@ int TIME2_freB;
 
 int fA_min,fA_max;
 int fB_min,fB_max;
+
 uint8_t FLAG_A=0;
 uint8_t FLAG_B=0;
+
+uint8_t FLAG_last_A=0;
+uint8_t FLAG_last_B=0;
+
+int state;
+int event_flag;
+int dir;
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
@@ -108,51 +119,93 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 	 }
 	 FRE_change_B();
 	 FRE_change_A();
+	 
 	 TIM2_fre_last_IC=TIM2_fre_IC;
-	 TIM3_fre_last_IC=TIM3_fre_IC;
+	 TIM3_fre_last_IC=TIM3_fre_previous_IC;
+	 
+	 TIM3_fre_previous_IC=TIM3_fre_IC;
+	 
  }
  
 void FRE_change_A()
 {
-	if(TIM2_fre_IC< TIM2_fre_last_IC && FLAG_A==0)
+	if(TIM2_fre_last_IC==0)
 	{
-		fA_min=TIM2_fre_IC;
-		TIM15->CNT=0;
-	}
-	else if(TIM2_fre_IC> TIM2_fre_last_IC)
-	{
-		FLAG_A=1;
+		TIM2_fre_last_IC=TIM2_fre_IC;
 	}
 	
-	if(TIM2_fre_IC> TIM2_fre_last_IC && FLAG_A==1)
+	if(TIM2_fre_IC>TIM2_fre_last_IC){dir=1;}
+	else if(TIM2_fre_IC<TIM2_fre_last_IC){dir=-1;}
+	
+	switch(state)
 	{
-		fA_max=TIM2_fre_IC;
-		if(fA_max-fA_min>PD && TIM15->CNT<30000)
+		case 0: //IDLE
+		{
+			if(dir==1)
+			{
+				fA_max=TIM2_fre_IC;
+				fA_min=TIM2_fre_IC;
+				state=1;
+				event_flag=0;
+				TIM15->CNT=0;
+			}
+			else if(dir==-1)
+			{
+				fA_max=TIM2_fre_IC;
+				fA_min=TIM2_fre_IC;
+				state=2;
+				event_flag=0;
+				TIM15->CNT=0;
+			}
+		}break;
+		case 1: //UP
+		{
+			if(dir==-1)
+			{
+				fA_max=fA_max;
+				fA_min=TIM2_fre_IC;
+				state=2;
+				event_flag=0;
+				TIM15->CNT=0;
+			}
+			else
+			{
+				fA_max=TIM2_fre_IC;
+			}
+		}break;
+		case 2: //DOWN
+		{
+			if(dir==1)
+			{
+				fA_min=fA_min;
+				fA_max=TIM2_fre_IC;
+				state=1;
+				event_flag=0;
+				TIM15->CNT=0;
+			}
+			else
+			{
+				fA_min=TIM2_fre_IC;
+			}
+		}break;
+	}
+	
+	if(event_flag==0 && state!=0)
+	{
+		if((fA_max-fA_min)>PD && TIM15->CNT<30000)
 		{
 			NDA++;
-			FLAG_A=0;
+			event_flag=1;
+			state=0;
 		}
 	}
 	
-	if(TIM2_fre_IC> TIM2_fre_last_IC && FLAG_A==0)
+	if(TIM15->CNT>=30000 && state!=0)
 	{
-		fA_max=TIM2_fre_IC;
-		TIM15->CNT=0;
-	}
-	else if(TIM2_fre_IC< TIM2_fre_last_IC)
-	{
-		FLAG_A=1;
+		state=0;
 	}
 	
-	if(TIM2_fre_IC< TIM2_fre_last_IC && FLAG_A==1)
-	{
-		fA_min=TIM2_fre_IC;
-		if(fA_max-fA_min>PD && TIM15->CNT<30000)
-		{
-			NDA++;
-			FLAG_A=0;
-		}
-	}
+	
 }
 
 void FRE_change_B()
@@ -444,10 +497,10 @@ void led_SHOW()
 					sprintf((char*)massage,"     B=NULL    ");
 					LCD_DisplayStringLine(Line4,massage);
 				}
-//				sprintf((char*)massage," MAX=%d   %d",fA_max,fB_max);
-//				LCD_DisplayStringLine(Line6,massage);
-//				sprintf((char*)massage," MIN=%d   %d",fA_min,fB_min);
-//				LCD_DisplayStringLine(Line7,massage);
+				sprintf((char*)massage," MAX=%d   %d",fA_max,fB_max);
+				LCD_DisplayStringLine(Line6,massage);
+				sprintf((char*)massage," MIN=%d   %d",fA_min,fB_min);
+				LCD_DisplayStringLine(Line7,massage);
 			}
 			else if(num3_MODE1==2)
 			{
